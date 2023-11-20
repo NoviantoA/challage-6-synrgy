@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class OrderController {
     public Response response;
 
     @PostMapping(value = {"/save", "/save/"})
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Map> saveOrder(@RequestBody OrderDto request) {
         try {
             return new ResponseEntity<Map>(orderService.saveOrder(request), HttpStatus.OK);
@@ -46,6 +48,7 @@ public class OrderController {
     }
 
     @PutMapping(value = {"/update/{orderId}", "/update/{orderId}/"})
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Map> updateOrder(@RequestBody OrderDto request, @PathVariable("orderId") UUID orderId) {
         try {
             if (orderId == null) {
@@ -58,6 +61,7 @@ public class OrderController {
     }
 
     @DeleteMapping(value = {"/delete/{orderId}", "/delete/{orderId}/"})
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Map> deleteOrder(@PathVariable("orderId") UUID orderId) {
         try {
             return new ResponseEntity<Map>(orderService.deleteOrder(orderId), HttpStatus.OK);
@@ -67,6 +71,7 @@ public class OrderController {
     }
 
     @GetMapping(value = {"/get/{orderId}", "/get/{orderId}/"})
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Map> getOrderById(@PathVariable("orderId") UUID orderId) {
         try {
             return new ResponseEntity<Map>(response.successResponse(orderRepository.getByIdOrder(orderId)), HttpStatus.OK);
@@ -76,6 +81,7 @@ public class OrderController {
     }
 
     @GetMapping("/all-orders")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public Page<Order> getAllOrder(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -84,6 +90,7 @@ public class OrderController {
     }
 
     @GetMapping("/completed")
+    @PreAuthorize("hasRole('CUSTOMER')")
     public Page<Order> getAllOrderCompleted(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -92,6 +99,7 @@ public class OrderController {
     }
 
     @GetMapping(value = {"/list-spec", "/list-spec/"})
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<Map> listOrderHeaderSpec(
             @RequestParam() Integer page,
             @RequestParam(required = true) Integer size,

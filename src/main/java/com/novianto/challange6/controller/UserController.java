@@ -21,6 +21,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -56,6 +57,7 @@ public class UserController {
     }
 
     @PutMapping(value = {"/update/{userId}", "/update/{userId}/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> updateUser(@RequestBody UserDto request, @PathVariable("userId") UUID userId) {
         try {
             if (userId == null) {
@@ -68,6 +70,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = {"/delete/{userId}", "/delete/{userId}/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> deleteUser(@PathVariable("userId") UUID userId) {
         try {
             return new ResponseEntity<Map>(userService.deleteUser(userId), HttpStatus.OK);
@@ -77,6 +80,7 @@ public class UserController {
     }
 
     @GetMapping(value = {"/get/{userId}", "/get/{userId}/"})
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<Map> getUserById(@PathVariable("userId") UUID userId) {
         try {
             return new ResponseEntity<Map>(response.successResponse(userRepository.getByIdUser(userId)), HttpStatus.OK);
@@ -86,6 +90,7 @@ public class UserController {
     }
 
     @GetMapping("/all-users")
+    @PreAuthorize("hasRole('MERCHANT')")
     public Page<User> getAllUser(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -94,6 +99,7 @@ public class UserController {
     }
 
     @GetMapping(value = {"/list-spec", "/list-spec/"})
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<Map> listUserHeaderSpec(
             @RequestParam() Integer page,
             @RequestParam(required = true) Integer size,
@@ -118,6 +124,7 @@ public class UserController {
     }
 
     @GetMapping("/reports")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public void getUserReport() throws JRException, IOException {
         responseHttp.setContentType("application/pdf");
         responseHttp.setHeader("Content-Disposition", "attachment; filename=\"user_list.pdf\"");

@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class MerchantController {
     public Response response;
 
     @PostMapping(value = {"/save", "/save/"})
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<Map> saveMerchant(@RequestBody MerchantDto request) {
         try {
             return new ResponseEntity<Map>(merchantService.saveMerchant(request), HttpStatus.OK);
@@ -46,6 +48,7 @@ public class MerchantController {
     }
 
     @PutMapping(value = {"/update/{merchantId}", "/update/{merchantId}/"})
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<Map> updateMerchant(@RequestBody MerchantDto request, @PathVariable("merchantId") UUID merchantId) {
         try {
             if (merchantId == null) {
@@ -58,6 +61,7 @@ public class MerchantController {
     }
 
     @DeleteMapping(value = {"/delete/{merchantId}", "/delete/{merchantId}/"})
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<Map> deleteMerchant(@PathVariable("merchantId") UUID merchantId) {
         try {
             return new ResponseEntity<Map>(merchantService.deleteMerchant(merchantId), HttpStatus.OK);
@@ -67,6 +71,7 @@ public class MerchantController {
     }
 
     @GetMapping(value = {"/get/{merchantId}", "/get/{merchantId}/"})
+    @PreAuthorize("hasRole('MERCHANT') or hasRole('CUSTOMER')")
     public ResponseEntity<Map> getMerchantById(@PathVariable("merchantId") UUID merchantId) {
         try {
             return new ResponseEntity<Map>(response.successResponse(merchantRepository.getByIdMerchant(merchantId)), HttpStatus.OK);
@@ -76,6 +81,7 @@ public class MerchantController {
     }
 
     @GetMapping("/all-merchants")
+    @PreAuthorize("hasRole('MERCHANT') or hasRole('CUSTOMER')")
     public Page<Merchant> getAllMerchant(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -84,6 +90,7 @@ public class MerchantController {
     }
 
     @GetMapping("/open")
+    @PreAuthorize("hasRole('MERCHANT') or hasRole('CUSTOMER')")
     public Page<Merchant> getAllMerchantOpen(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -92,6 +99,7 @@ public class MerchantController {
     }
 
     @GetMapping("/close")
+    @PreAuthorize("hasRole('MERCHANT') or hasRole('CUSTOMER')")
     public Page<Merchant> getAllMerchantClose(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -100,6 +108,7 @@ public class MerchantController {
     }
 
     @GetMapping(value = {"/list-spec", "/list-spec/"})
+    @PreAuthorize("hasRole('MERCHANT') or hasRole('CUSTOMER')")
     public ResponseEntity<Map> listMerchantHeaderSpec(
             @RequestParam() Integer page,
             @RequestParam(required = true) Integer size,

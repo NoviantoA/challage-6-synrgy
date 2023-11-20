@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class ProductController {
     public Response response;
 
     @PostMapping(value = {"/save", "/save/"})
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<Map> saveProduct(@RequestBody ProductDto request) {
         try {
             return new ResponseEntity<Map>(productService.saveProduct(request), HttpStatus.OK);
@@ -46,6 +48,7 @@ public class ProductController {
     }
 
     @PutMapping(value = {"/update/{productId}", "/update/{productId}/"})
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<Map> updateProduct(@RequestBody ProductDto request, @PathVariable("productId") UUID productId) {
         try {
             if (productId == null) {
@@ -58,6 +61,7 @@ public class ProductController {
     }
 
     @DeleteMapping(value = {"/delete/{productId}", "/delete/{productId}/"})
+    @PreAuthorize("hasRole('MERCHANT')")
     public ResponseEntity<Map> deleteProduct(@PathVariable("productId") UUID productId) {
         try {
             return new ResponseEntity<Map>(productService.deleteProduct(productId), HttpStatus.OK);
@@ -67,6 +71,7 @@ public class ProductController {
     }
 
     @GetMapping(value = {"/get/{productId}", "/get/{productId}/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> getProductById(@PathVariable("productId") UUID productId) {
         try {
             return new ResponseEntity<Map>(response.successResponse(productRepository.getByIdProduct(productId)), HttpStatus.OK);
@@ -76,6 +81,7 @@ public class ProductController {
     }
 
     @GetMapping("/all-products")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public Page<Product> getAllProduct(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -84,6 +90,7 @@ public class ProductController {
     }
 
     @GetMapping(value = {"/list-spec", "/list-spec/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> listProductHeaderSpec(
             @RequestParam() Integer page,
             @RequestParam(required = true) Integer size,

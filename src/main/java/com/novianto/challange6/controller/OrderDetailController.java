@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class OrderDetailController {
     public Response response;
 
     @PostMapping(value = {"/save", "/save/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> saveOrderDetail(@RequestBody OrderDetailDto request) {
         try {
             return new ResponseEntity<Map>(orderDetailService.saveOrderDetail(request), HttpStatus.OK);
@@ -46,6 +48,7 @@ public class OrderDetailController {
     }
 
     @PutMapping(value = {"/update/{orderDetailId}", "/update/{orderDetailId}/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> updateOrderDetail(@RequestBody OrderDetailDto request, @PathVariable("orderDetailId") UUID orderDetailId) {
         try {
             if (orderDetailId == null) {
@@ -58,6 +61,7 @@ public class OrderDetailController {
     }
 
     @DeleteMapping(value = {"/delete/{orderDetailId}", "/delete/{orderDetailId}/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> deleteOrderDetail(@PathVariable("orderDetailId") UUID orderDetailId) {
         try {
             return new ResponseEntity<Map>(orderDetailService.deleteOrderDetail(orderDetailId), HttpStatus.OK);
@@ -67,6 +71,7 @@ public class OrderDetailController {
     }
 
     @GetMapping(value = {"/get/{orderDetailId}", "/get/{orderDetailId}/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> getOrderDetailById(@PathVariable("orderDetailId") UUID orderDetailId) {
         try {
             return new ResponseEntity<Map>(response.successResponse(orderDetailRepository.getByIdOrderDetail(orderDetailId)), HttpStatus.OK);
@@ -76,6 +81,7 @@ public class OrderDetailController {
     }
 
     @GetMapping("/all-order-details")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public Page<OrderDetail> getAllOrderDetail(
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -84,6 +90,7 @@ public class OrderDetailController {
     }
 
     @GetMapping("/user/{userId}")
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public Page<OrderDetail> getAllOrderDetailByIdUser(@PathVariable UUID userId,
             @RequestParam(value = "page", required = false, defaultValue = "0") int page,
             @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
@@ -92,6 +99,7 @@ public class OrderDetailController {
     }
 
     @GetMapping(value = {"/list-spec", "/list-spec/"})
+    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
     public ResponseEntity<Map> listOrderDetailHeaderSpec(
             @RequestParam() Integer page,
             @RequestParam(required = true) Integer size,
