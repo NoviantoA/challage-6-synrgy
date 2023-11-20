@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -17,14 +18,17 @@ public interface UserRepository extends JpaRepository<User, UUID>, JpaSpecificat
     @Query(value = "SELECT u FROM User u WHERE u.id = :id")
     public User getByIdUser(@Param("id") UUID id);
 
-    @Query("FROM User u WHERE LOWER(u.username) = LOWER(?1)")
+    @Query("FROM User u WHERE LOWER(u.username) = LOWER(:username)")
     User findOneByUsername(String username);
+
+    @Query("SELECT u FROM User u WHERE coalesce(LOWER(u.username), LOWER(u.emailAddress)) = LOWER(:usernameOrEmail)")
+    User findOneByUsernameOrEmail(@Param("usernameOrEmail") String usernameOrEmail);
 
     @Query("FROM User u WHERE u.otp = ?1")
     User findOneByOTP(String otp);
 
-    @Query("FROM User u WHERE LOWER(u.username) = LOWER(:username)")
-    User checkExistingEmail(String username);
+    @Query("FROM User u WHERE LOWER(u.username) = LOWER(:username) OR LOWER(u.emailAddress) = LOWER(:email)")
+    User checkExistingUsernameOrEmail(String username, String email);
 
     @Query(value = "SELECT u FROM users u WHERE id = :id", nativeQuery = true)
     public Object getByIdNative(@Param("id") UUID id);

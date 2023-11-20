@@ -2,6 +2,7 @@ package com.novianto.challange6.service.auth;
 
 import com.novianto.challange6.config.ConfigSecurity;
 import com.novianto.challange6.dto.LoginDto;
+import com.novianto.challange6.dto.RegisterDto;
 import com.novianto.challange6.entity.User;
 import com.novianto.challange6.entity.auth.Role;
 import com.novianto.challange6.repository.RoleRepository;
@@ -26,10 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class UserAuthServiceImpl implements UserAuthService {
@@ -56,7 +54,7 @@ public class UserAuthServiceImpl implements UserAuthService {
     public Map login(LoginDto loginDto) {
         try {
             Map<String, Object> map = new HashMap<>();
-            User checkUser = userRepository.findOneByUsername(loginDto.getUsername());
+            User checkUser = userRepository.findOneByUsernameOrEmail(loginDto.getUsernameOrEmail());
             if ((checkUser != null) && (encoder.matches(loginDto.getPassword(), checkUser.getPassword()))) {
                 if (!checkUser.isEnabled()) {
                     map.put("is_enabled", checkUser.isEnabled());
@@ -70,7 +68,7 @@ public class UserAuthServiceImpl implements UserAuthService {
                     checkUser.getPassword()))) {
                 return templateResponse.errorTemplateResponse("wrong password");
             }
-            String url = baseUrl + "/oauth/token?username=" + loginDto.getUsername() +
+            String url = baseUrl + "/oauth/token?username=" + loginDto.getUsernameOrEmail() +
                     "&password=" + loginDto.getPassword() +
                     "&grant_type=password" +
                     "&client_id=my-client-web" +
@@ -78,7 +76,7 @@ public class UserAuthServiceImpl implements UserAuthService {
             ResponseEntity<Map> response = restTemplateBuilder.build().exchange(url, HttpMethod.POST, null, new ParameterizedTypeReference<Map>() {
             });
             if (response.getStatusCode() == HttpStatus.OK) {
-                User user = userRepository.findOneByUsername(loginDto.getUsername());
+                User user = userRepository.findOneByUsernameOrEmail(loginDto.getUsernameOrEmail());
                 List<String> roles = new ArrayList<>();
                 for (Role role : user.getRoles()) {
                     roles.add(role.getName());
@@ -120,6 +118,29 @@ public class UserAuthServiceImpl implements UserAuthService {
         }
     }
 
+    @Override
+    public Map registerManual(RegisterDto registerDto) {
+        Map map = new HashMap();
+        try {
+            String[] roleNames = {"ROLE_CUSTOMER", "ROLE_READ", "ROLE_WRITE"}; // admin
+            User user = new User();
+            user.setId(UUID.randomUUID());
+            user.setUsername(registerDto.getUsername().toLowerCase());
+            user.setEmailAddress(registerDto.getEmailAddress().toLowerCase());
+            //step 1 :
+            // user.setEnabled(false); // matikan user
+            String password = encoder.encode(registerDto.getPassword().replaceAll("\\s+", ""));
+            List<Role> r = repoRole.findByNameIn(roleNames);
+            user.setRoles(r);
+            user.setPassword(password);
+            User obj = repoUser.save(user);
+            return templateResponse.successResponse(obj);
+        } catch (Exception e) {
+            logger.error("Eror registerManual = ", e);
+            return templateResponse.errorTemplateResponse("eror : " + e);
+        }
+    }
+
     private User getUserIdToken(Principal principal, Oauth2UserDetailsService userDetailsService) {
         UserDetails user = null;
         String username = principal.getName();
@@ -129,8 +150,7 @@ public class UserAuthServiceImpl implements UserAuthService {
         if (null == user) {
             throw new UsernameNotFoundException("User not found");
         }
-        User idUser =
-                userRepository.findOneByUsername(user.getUsername());
+        User idUser = userRepository.findOneByUsername(user.getUsername());
         if (null == idUser) {
             throw new UsernameNotFoundException("User name not found");
         }

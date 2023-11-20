@@ -16,12 +16,12 @@ public class Oauth2UserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private MerchantRepository merchantRepository;
+
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userRepository.findOneByUsername(s);
-//        Merchant merchant = merchantRepository.findOneByMerchantName(s);
-        if (null == user ) {
-            throw new UsernameNotFoundException(String.format("Username %s is not found", s));
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        User user = userRepository.findOneByUsername(usernameOrEmail);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("Username or Email %s is not found", usernameOrEmail));
         }
         return user;
     }

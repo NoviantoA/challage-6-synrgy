@@ -7,6 +7,7 @@ import com.novianto.challange6.util.AbstractDate;
 import javax.persistence.*;
 
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -113,7 +114,7 @@ public class User extends AbstractDate implements UserDetails, Serializable {
 
     @Override
     public String getUsername() {
-        return username;
+        return StringUtils.isNotEmpty(emailAddress) ? emailAddress : username;
     }
 
     @Override

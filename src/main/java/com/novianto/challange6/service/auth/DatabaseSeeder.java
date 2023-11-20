@@ -36,8 +36,8 @@ public class DatabaseSeeder implements ApplicationRunner {
     private RolePathRepository rolePathRepository;
     private String defaultPassword = "password";
     private String[] users = new String[]{
-            "user@mail.com:ROLE_CUSTOMER",
-            "merchant@mail.com:ROLE_MERCHANT",
+            "testuser:user@mail.com:ROLE_CUSTOMER",
+            "testmerchant:merchant@mail.com:ROLE_MERCHANT",
     };
 
     private String[] clients = new String[]{
@@ -127,7 +127,7 @@ public class DatabaseSeeder implements ApplicationRunner {
         for (String userNames : users) {
             String[] str = userNames.split(":");
             String username = str[0];
-            String[] roleNames = str[1].split("\\s");
+            String[] roleNames = str[2].split("\\s");
             User oldUser = userRepository.findOneByUsername(username);
             if (null == oldUser) {
                 oldUser = new User();
