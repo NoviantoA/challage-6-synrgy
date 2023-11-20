@@ -10,4 +10,5 @@ public interface UserAuthService {
     public Map login(LoginDto loginDto);
     public Map getDetailProfile(Principal principal);
     Map registerManual(RegisterDto registerDto);
+    Map registerByGoogle(RegisterDto registerDto) ;
 }

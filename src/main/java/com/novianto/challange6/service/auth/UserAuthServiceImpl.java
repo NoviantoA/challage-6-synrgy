@@ -81,10 +81,6 @@ public class UserAuthServiceImpl implements UserAuthService {
                 for (Role role : user.getRoles()) {
                     roles.add(role.getName());
                 }
-                //save token
-                //checkUser.setAccessToken(response.getBody().get("access_token").toString());
-                //checkUser.setRefreshToken(response.getBody().get("refresh_token").toString());
-                // userRepository.save(checkUser);
                 map.put("access_token", response.getBody().get("access_token"));
                 map.put("token_type", response.getBody().get("token_type"));
                 map.put("refresh_token", response.getBody().get("refresh_token"));
@@ -122,22 +118,47 @@ public class UserAuthServiceImpl implements UserAuthService {
     public Map registerManual(RegisterDto registerDto) {
         Map map = new HashMap();
         try {
-            String[] roleNames = {"ROLE_CUSTOMER", "ROLE_READ", "ROLE_WRITE"}; // admin
+            String[] roleNames = {"ROLE_CUSTOMER", "ROLE_READ", "ROLE_WRITE"};
             User user = new User();
             user.setId(UUID.randomUUID());
+            user.setUsername(registerDto.getUsername());
+            System.out.println(registerDto.getUsername());
+            user.setEmailAddress(registerDto.getEmailAddress());
+
+            String password = encoder.encode(registerDto.getPassword().replaceAll("\\s+", ""));
+            List<Role> r = repoRole.findByNameIn(roleNames);
+
+            user.setRoles(r);
+            user.setPassword(password);
+            User obj = repoUser.save(user);
+
+            return templateResponse.successResponse(obj);
+
+        } catch (Exception e) {
+            logger.error("Eror registerManual=", e);
+            return templateResponse.errorTemplateResponse("eror:" + e);
+        }
+    }
+
+    @Override
+    public Map registerByGoogle(RegisterDto registerDto) {
+        Map map = new HashMap();
+        try {
+            String[] roleNames = {"ROLE_CUSTOMER", "ROLE_READ", "ROLE_WRITE"}; // ROLE DEFAULE
+            User user = new User();
             user.setUsername(registerDto.getUsername().toLowerCase());
-            user.setEmailAddress(registerDto.getEmailAddress().toLowerCase());
-            //step 1 :
-            // user.setEnabled(false); // matikan user
+            user.setEmailAddress(registerDto.getEmailAddress());
+            user.setEnabled(false);
             String password = encoder.encode(registerDto.getPassword().replaceAll("\\s+", ""));
             List<Role> r = repoRole.findByNameIn(roleNames);
             user.setRoles(r);
             user.setPassword(password);
             User obj = repoUser.save(user);
             return templateResponse.successResponse(obj);
+
         } catch (Exception e) {
-            logger.error("Eror registerManual = ", e);
-            return templateResponse.errorTemplateResponse("eror : " + e);
+            logger.error("Eror registerManual=", e);
+            return templateResponse.errorTemplateResponse("eror:" + e);
         }
     }
 
