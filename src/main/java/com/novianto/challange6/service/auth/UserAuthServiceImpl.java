@@ -9,6 +9,7 @@ import com.novianto.challange6.repository.UserRepository;
 import com.novianto.challange6.service.UserAuthService;
 import com.novianto.challange6.service.impl.UserServiceImpl;
 import com.novianto.challange6.util.Response;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,13 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +33,6 @@ import java.util.Map;
 
 @Service
 public class UserAuthServiceImpl implements UserAuthService {
-
     @Value("${BASEURL}")
     private String baseUrl;
     @Autowired
@@ -46,6 +49,8 @@ public class UserAuthServiceImpl implements UserAuthService {
     UserRepository repoUser;
     @Autowired
     public Response templateResponse;
+    @Autowired
+    private Oauth2UserDetailsService userDetailsService;
 
     @Override
     public Map login(LoginDto loginDto) {
@@ -102,5 +107,33 @@ public class UserAuthServiceImpl implements UserAuthService {
             e.printStackTrace();
             return templateResponse.errorTemplateResponse(e);
         }
+    }
+
+    @Override
+    public Map getDetailProfile(Principal principal) {
+        User idUser = getUserIdToken(principal, userDetailsService);
+        try {
+            User obj = userRepository.save(idUser);
+            return templateResponse.successResponse(obj);
+        } catch (Exception e) {
+            return templateResponse.error(e, "500");
+        }
+    }
+
+    private User getUserIdToken(Principal principal, Oauth2UserDetailsService userDetailsService) {
+        UserDetails user = null;
+        String username = principal.getName();
+        if (!StringUtils.isEmpty(username)) {
+            user = userDetailsService.loadUserByUsername(username);
+        }
+        if (null == user) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        User idUser =
+                userRepository.findOneByUsername(user.getUsername());
+        if (null == idUser) {
+            throw new UsernameNotFoundException("User name not found");
+        }
+        return idUser;
     }
 }

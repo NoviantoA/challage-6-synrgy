@@ -3,7 +3,9 @@ package com.novianto.challange6.controller;
 import com.novianto.challange6.dto.UserDto;
 import com.novianto.challange6.entity.User;
 import com.novianto.challange6.repository.UserRepository;
+import com.novianto.challange6.service.UserAuthService;
 import com.novianto.challange6.service.UserService;
+import com.novianto.challange6.service.auth.Oauth2UserDetailsService;
 import com.novianto.challange6.service.impl.ReportUser;
 import com.novianto.challange6.util.ConfigValidation;
 import com.novianto.challange6.util.Response;
@@ -25,6 +27,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +36,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/user")
 public class UserController {
-
     @Autowired
     private UserService userService;
     @Autowired
@@ -46,6 +48,10 @@ public class UserController {
     private HttpServletResponse responseHttp;
     @Autowired
     private ReportUser reportUser;
+    @Autowired
+    private Oauth2UserDetailsService userDetailsService;
+    @Autowired
+    private UserAuthService userAuthService;
 
     @PostMapping(value = {"/save", "/save/"})
     public ResponseEntity<Map> saveUser(@RequestBody UserDto request) {
@@ -132,4 +138,9 @@ public class UserController {
         JasperExportManager.exportReportToPdfStream(jasperPrint, responseHttp.getOutputStream());
     }
 
+    @GetMapping("/detail-profile")
+    public ResponseEntity<Map> detailProfile(Principal principal) {
+        Map map = userAuthService.getDetailProfile(principal);
+        return new ResponseEntity<Map>(map, HttpStatus.OK);
+    }
 }

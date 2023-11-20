@@ -119,6 +119,13 @@ public class Response {
         return response;
     }
 
+    public Map error(Object obj, Object code){
+        Map map = new HashMap();
+        map.put("status", code);
+        map.put("message", obj);
+        return map;
+    }
+
     public Map<String, Object> notFound(Object message) {
         Map<String, Object> response = new HashMap<>();
         response.put("message", message);
