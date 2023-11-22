@@ -118,7 +118,7 @@ public class EmailTemplate {
                 "Please use the verification code below to reset your password : <br/> </p>" +
                 "<strong style=\"font-size:24px;\">{{PASS_TOKEN}}</strong> <br/>\n" +
                 "<p style=\"color:#455056; font-size:15px;line-height:24px; margin:0;\">\n" +
-                "If this action wasn’t done by you, please contact us on <b>rikialdipari@gmail.com</b>. But if it’s you, you can ignore this message. </p>" +
+                "If this action wasn’t done by you, please contact us on <b>mnoviantoanggoro@gmail.com</b>. But if it’s you, you can ignore this message. </p>" +
                 "</td>\n" +
                 "</tr>\n" +
                 "<tr>\n" +

@@ -5,6 +5,7 @@ import lombok.Data;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 @Data
 public class ConfigSecurity {
@@ -21,5 +22,14 @@ public class ConfigSecurity {
         DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
         String strDate = dateFormat.format(date);
         return strDate;
+    }
+    public boolean isValidEmail(String email)
+    {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\."+
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$";
+        Pattern pat = Pattern.compile(emailRegex);
+        return pat.matcher(email).matches();
     }
 }
