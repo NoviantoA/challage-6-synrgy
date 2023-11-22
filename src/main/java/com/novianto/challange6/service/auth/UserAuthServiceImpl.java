@@ -10,7 +10,7 @@ import com.novianto.challange6.repository.UserRepository;
 import com.novianto.challange6.service.UserAuthService;
 import com.novianto.challange6.service.impl.UserServiceImpl;
 import com.novianto.challange6.util.Response;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

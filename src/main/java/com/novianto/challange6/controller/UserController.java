@@ -6,15 +6,15 @@ import com.novianto.challange6.repository.UserRepository;
 import com.novianto.challange6.service.UserAuthService;
 import com.novianto.challange6.service.UserService;
 import com.novianto.challange6.service.auth.Oauth2UserDetailsService;
-import com.novianto.challange6.service.impl.ReportUser;
+//import com.novianto.challange6.service.impl.ReportUser;
 import com.novianto.challange6.util.ConfigValidation;
 import com.novianto.challange6.util.Response;
 import com.novianto.challange6.util.SimpleStringUtil;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletResponse;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperPrint;
+//import net.sf.jasperreports.engine.JRException;
+//import net.sf.jasperreports.engine.JasperExportManager;
+//import net.sf.jasperreports.engine.JasperPrint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,8 +46,8 @@ public class UserController {
     private Response response;
     @Autowired
     private HttpServletResponse responseHttp;
-    @Autowired
-    private ReportUser reportUser;
+//    @Autowired
+//    private ReportUser reportUser;
     @Autowired
     private Oauth2UserDetailsService userDetailsService;
     @Autowired
@@ -129,14 +129,14 @@ public class UserController {
         return new ResponseEntity<Map>(response.successResponse(list), new HttpHeaders(), HttpStatus.OK);
     }
 
-    @GetMapping("/reports")
-    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
-    public void getUserReport() throws JRException, IOException {
-        responseHttp.setContentType("application/pdf");
-        responseHttp.setHeader("Content-Disposition", "attachment; filename=\"user_list.pdf\"");
-        JasperPrint jasperPrint = reportUser.jasperPrint();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, responseHttp.getOutputStream());
-    }
+//    @GetMapping("/reports")
+//    @PreAuthorize("hasRole('CUSTOMER') or hasRole('MERCHANT')")
+//    public void getUserReport() throws JRException, IOException {
+//        responseHttp.setContentType("application/pdf");
+//        responseHttp.setHeader("Content-Disposition", "attachment; filename=\"user_list.pdf\"");
+//        JasperPrint jasperPrint = reportUser.jasperPrint();
+//        JasperExportManager.exportReportToPdfStream(jasperPrint, responseHttp.getOutputStream());
+//    }
 
     @GetMapping("/detail-profile")
     public ResponseEntity<Map> detailProfile(Principal principal) {

@@ -6,7 +6,7 @@ import com.novianto.challange6.repository.MerchantRepository;
 import com.novianto.challange6.service.MerchantService;
 import com.novianto.challange6.util.ConfigValidation;
 import com.novianto.challange6.util.Response;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;

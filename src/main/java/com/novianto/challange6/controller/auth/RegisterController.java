@@ -9,7 +9,7 @@ import com.novianto.challange6.service.mail.EmailSender;
 import com.novianto.challange6.util.EmailTemplate;
 import com.novianto.challange6.util.Response;
 import com.novianto.challange6.util.SimpleStringUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
